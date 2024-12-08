@@ -1,6 +1,6 @@
 !
 !     CalculiX - A 3-dimensional finite element program
-!              Copyright (C) 1998-2015 Guido Dhondt
+!              Copyright (C) 1998-2023 Guido Dhondt
 !
 !     This program is free software; you can redistribute it and/or
 !     modify it under the terms of the GNU General Public License as
@@ -18,7 +18,7 @@
 !
       subroutine printoutcontact(co,vold,lakon,ne0,ne,pslavsurf,stx,
      &  prset,ttime,nprint,prlab,mi,ipkon,kon,springarea,
-     &  time,tieset,itiefac,ntie,pmastsurf)
+     &  time,tieset,itiefac,ntie,pmastsurf,islavsurf)
 !
 !     calculation and printout of the contact forces
 !
@@ -30,13 +30,13 @@
 !
       integer ii,nprint,i,j,k,i1,nope,nopes,iposslave,ne0,ne,nopem,
      &  iflag,indexe,ipos,itie,ipkon(*),kon(*),mi(*),igauss,jfaces,
-     &  node,istart,iend,ntie,itiefac(2,*)
+     &  node,istart,iend,ntie,itiefac(2,*),iface, ielem, islavsurf(2,*)
 !
       real*8 co(3,*),f(0:3),time,pslavsurf(3,*),vold(0:mi(2),*),xi,et,
      &  weight,ttime,coords(3),xm(3),df(3),cg(3),
      &  area,xn(3),xnormforc,shearforc,xntot(3),t1(3),t2(3),pl(3,16),
      &  xsj2s(3),xs2s(3,7),darea,dt1,springarea(2,*),shp2s(7,9),
-     &  pmastsurf(6,*),stx(6,mi(1),*)
+     &  pmastsurf(6,*),stx(6,mi(1),*) 
 !
 !
       include "gauss.f"
@@ -75,6 +75,13 @@
 !
 !           loop over all contact elements
 !
+            write(5,*)
+            write(5,177) ttime+time
+ 177          format('contact force contribution'
+     &,' (slave element+face,fx,fy,fz'
+     &,') for all contact elements and time',
+     &             e14.7)
+            write(5,*)
             do i=ne0+1,ne
 !
 !              check whether contact element
@@ -89,6 +96,7 @@
 !
                jfaces=kon(indexe+nope+2)
                if((jfaces.lt.istart).or.(jfaces.gt.iend)) cycle
+
 !
 !              location of integration point information
 !               
@@ -210,6 +218,13 @@
                   cg(i1)=cg(i1)+coords(i1)*darea
                   xntot(i1)=xntot(i1)+xn(i1)*darea
                enddo
+!
+!              Print Force contributions
+!
+               ielem=int(islavsurf(1,jfaces)/10.d0)
+               iface=islavsurf(1,jfaces)-10*ielem
+               write(5,'(i10,1x,i10,1p,1x,e13.6,1x,e13.6,1x,e13.6)') 
+     &           ielem,iface,(df(k),k=1,3)
 !
             enddo
 !

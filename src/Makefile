@@ -1,8 +1,8 @@
 
-CFLAGS = -Wall -g  -I ../../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
-FFLAGS = -Wall -g
+CFLAGS = -Wall -O2  -I ../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
+FFLAGS = -Wall -O2
 
-CC=cc
+CC=gcc
 FC=gfortran
 
 .c.o :
@@ -18,15 +18,17 @@ OCCXF = $(SCCXF:.f=.o)
 OCCXC = $(SCCXC:.c=.o)
 OCCXMAIN = $(SCCXMAIN:.c=.o)
 
-DIR=../../SPOOLES.2.2
+DIR=../SPOOLES.2.2
 
 LIBS = \
        $(DIR)/spooles.a \
-	../../ARPACK/libarpack_INTEL.a \
+        /work/projects/project02298/.conda/envs/ccx/lib/libarpack.a\
+	/work/projects/project02298/.conda/envs/ccx/lib/liblapack.a\
+	/work/projects/project02298/.conda/envs/ccx/lib/libblas.a\
        -lpthread -lm -lc
 
 CalculiX: $(OCCXMAIN) CalculiX.a  $(LIBS)
-	./date.pl; $(CC) $(CFLAGS) -c CalculiX.c; $(FC)  -Wall -g -o $@ $(OCCXMAIN) CalculiX.a $(LIBS) -fopenmp
+	./date.pl; $(CC) $(CFLAGS) -c CalculiX.c; $(FC)  -Wall -O2 -o $@ $(OCCXMAIN) CalculiX.a $(LIBS) -fopenmp
 
 CalculiX.a: $(OCCXF) $(OCCXC)
 	ar vr $@ $?

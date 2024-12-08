@@ -154,7 +154,7 @@
 !     
       call printoutcontact(co,vold,lakon,ne0,ne,pslavsurf,stx,
      &     prset,ttime,nprint,prlab,mi,ipkon,kon,springarea,
-     &     time,tieset,itiefac,ntie,pmastsurf)
+     &     time,tieset,itiefac,ntie,pmastsurf,islavsurf)
 !     
 !     interpolation in the original nodes of 1d and 2d elements
 !     this operation has to be performed in any case since
